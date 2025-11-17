@@ -1,0 +1,11 @@
+"""OpenCV, numpy, PyTorch, FastAPI 등 필요한 파이썬 패키지 목록입니다.
+ 가상환경 만들 때 pip install -r requirements.txt로 설치합니다."""
+
+opencv-python
+numpy
+pyyaml
+onnxruntime
+torch
+torchvision
+fastapi
+uvicorn
