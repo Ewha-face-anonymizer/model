@@ -7,7 +7,7 @@ from typing import Dict
 
 import numpy as np
 
-from .embedder import FaceEmbedder
+from components.embedding.arcface_embedder import FaceEmbedder
 
 
 class ReferenceManager:
