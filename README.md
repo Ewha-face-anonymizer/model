@@ -74,6 +74,7 @@ data/input          # 입력 / 기준 / 테스트 이미지
 data/output         # 결과 저장
 ```
 
+<<<<<<< HEAD
 ## 5. 인터페이스 시각화
 ```mermaid
 graph TD
@@ -89,6 +90,14 @@ graph TD
 - 1단계: 로컬 CLI/스크립트에서 이미지와 기준 인물 이미지를 선택합니다.
 - 2단계: 추후 웹 UI를 추가하여 업로드, 미리보기, 결과 다운로드까지 한 화면에서 수행할 계획입니다.
 
+=======
+## 5. 할 일 (로직 구현 예정)
+- [ ] MTCNN 실제 검출 코드 연결 (facenet-pytorch 이용)
+- [ ] ArcFace 임베더 전처리/추론/L2 정규화 구현
+- [ ] ReferenceManager에서 검출 결과 중 가장 큰 얼굴 선택 후 임베딩
+- [ ] 간단 CLI (`python -m runner.image_runner`) 추가
+- [ ] LFW 샘플 자동 다운로드 스크립트 추가
+>>>>>>> b582edb (초기 환경 세팅: conda 환경 설정, OpenCV/MTCNN/ArcFace 설치, 테스트 이미지 준비)
 
 ## 6. 문제 해결 팁
 | 문제 | 원인 | 해결 |
@@ -107,8 +116,11 @@ conda env export -n face-embed > lock.yml
 
 ## 8. 라이선스
 원본 라이선스 파일(`LICENSE`) 참고.
+<<<<<<< HEAD
 
 
 
 
 
+=======
+>>>>>>> b582edb (초기 환경 세팅: conda 환경 설정, OpenCV/MTCNN/ArcFace 설치, 테스트 이미지 준비)
