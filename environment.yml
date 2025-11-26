@@ -1,0 +1,24 @@
+name: face-embed
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - numpy
+  - opencv                    # conda 채널용
+  - pyyaml
+  - onnxruntime
+  - pytorch
+  - torchvision
+  - fastapi
+  - uvicorn
+  - pip:
+      - facenet-pytorch        # MTCNN 구현 포함
+      - mtcnn                  # 대체 MTCNN 패키지
+      - insightface            # ArcFace 모델
+      - Pillow
+# 사용 방법:
+#   conda env create -f environment.yml
+#   conda activate face-embed
+#   (Apple Silicon에서 onnxruntime 문제시 pip install onnxruntime-silicon)
