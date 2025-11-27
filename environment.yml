@@ -18,6 +18,7 @@ dependencies:
       - mtcnn                  # 대체 MTCNN 패키지
       - insightface            # ArcFace 모델
       - Pillow
+      - mtcnn-onnxruntime 
 # 사용 방법:
 #   conda env create -f environment.yml
 #   conda activate face-embed
