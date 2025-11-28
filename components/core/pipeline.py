@@ -28,11 +28,9 @@ class MosaicPipeline:
             min_size=config.processing.detection_min_size,
         )
         self.embedder = FaceEmbedder(model_path=Path(config.models.embedder))
-        self.matcher = ReferenceMatcher(threshold=config.mosaic_threshold)
+        self.reference_manager = ReferenceManager(embedder=self.embedder)
+        self.matcher = ReferenceMatcher(ref_manager=self.reference_manager, threshold=config.mosaic_threshold)
         self.mosaicer = MosaicProcessor(kernel_size=config.processing.mosaic_kernel)
-        self.reference_manager = ReferenceManager(
-            embedder=self.embedder,
-        )
 
     def process_image(
         self,
@@ -46,7 +44,7 @@ class MosaicPipeline:
         ref_embedding = self.reference_manager.get_embedding(reference_image)
         bboxes, faces = self.detector.detect_faces(image)
         embeddings = self.embedder.embed_all(faces)
-        keep_mask = self.matcher.match_batch(embeddings, ref_embedding)
+        keep_mask = self.matcher.match_batch(embeddings)
         mosaicked = self._mosaic_non_matches(image, bboxes, keep_mask)
         self.detector.save_image(mosaicked, output_dir / f"{input_image.stem}_mosaic.jpg")
 
