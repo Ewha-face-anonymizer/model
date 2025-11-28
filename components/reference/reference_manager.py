@@ -31,12 +31,18 @@ class ReferenceManager:
             from components.detection.mtcnn_detector import FaceDetector
             detector = FaceDetector(model_path=None, min_size=20)
             _, faces = detector.detect_faces(img)
+            print(f"[ReferenceManager] faces detected: {len(faces)}")
+            if faces:
+                print(f"[ReferenceManager] first face shape: {faces[0].shape}")
             if not faces:
                 raise ValueError("기준 이미지에서 얼굴을 검출할 수 없습니다.")
             aligned_face = faces[0]  # 첫 번째 얼굴 사용
         else:
             aligned_face = reference_image
-        return self.embedder.embed(aligned_face)
+        emb = self.embedder.embed(aligned_face)
+        print(f"[ReferenceManager] reference embedding shape: {getattr(emb, 'shape', None)}")
+        self.references = [emb]  # 기준 임베딩을 리스트에 저장
+        return emb
     
     # 기준 임베딩 추가 (내부에서 get_embedding 사용)
     def add(self, aligned_face: np.ndarray) -> None:
