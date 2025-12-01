@@ -1,0 +1,103 @@
+{
+  "timestamp": "2025-12-01 18:30:49",
+  "test_image": "data/input/단체사진.jpg",
+  "person_name": "우찬",
+  "threshold": 0.47,
+  "reference_images": [
+    "data/input/우찬/우찬1.jpg",
+    "data/input/우찬/우찬2.jpg",
+    "data/input/우찬/우찬3.jpg"
+  ],
+  "faces": [
+    {
+      "face_index": 0,
+      "bbox": [
+        681,
+        308,
+        769,
+        418
+      ],
+      "min_distance": 0.42814359212429387,
+      "all_distances": [
+        0.42814359212429387,
+        0.46423643936867054,
+        0.5535863384542337
+      ],
+      "is_same_person": true,
+      "will_mosaic": false
+    },
+    {
+      "face_index": 1,
+      "bbox": [
+        942,
+        344,
+        1018,
+        446
+      ],
+      "min_distance": 0.8525076049423413,
+      "all_distances": [
+        0.8525076049423413,
+        0.9621368731715082,
+        0.8953990958898196
+      ],
+      "is_same_person": false,
+      "will_mosaic": true
+    },
+    {
+      "face_index": 2,
+      "bbox": [
+        329,
+        308,
+        405,
+        407
+      ],
+      "min_distance": 0.7584303949707416,
+      "all_distances": [
+        0.7837243419891224,
+        0.7584303949707416,
+        0.8577229990881753
+      ],
+      "is_same_person": false,
+      "will_mosaic": true
+    },
+    {
+      "face_index": 3,
+      "bbox": [
+        504,
+        361,
+        575,
+        448
+      ],
+      "min_distance": 0.7970835437800725,
+      "all_distances": [
+        0.8302801614257351,
+        0.8182934175176705,
+        0.7970835437800725
+      ],
+      "is_same_person": false,
+      "will_mosaic": true
+    },
+    {
+      "face_index": 4,
+      "bbox": [
+        99,
+        395,
+        168,
+        470
+      ],
+      "min_distance": 0.8428919292773138,
+      "all_distances": [
+        0.8490637912980726,
+        0.8428919292773138,
+        0.908483699879282
+      ],
+      "is_same_person": false,
+      "will_mosaic": true
+    }
+  ],
+  "reference_embeddings_count": 3,
+  "total_faces_detected": 5,
+  "processing_time_seconds": 0.713264,
+  "same_person_count": 1,
+  "mosaicked_count": 4
+}
