@@ -24,11 +24,6 @@ class ReferenceMatcher:
         manager에 저장된 모든 기준 임베딩과 비교. (기준 임베딩 개수 상관X)
         """
         references = self.ref_manager.get_all()   # manager에서 baseline 받아오기
-        print(f"[ReferenceMatcher] reference embeddings count: {len(references)}")
-        if len(references) > 0:
-            for i, ref in enumerate(references):
-                print(f"  reference[{i}] shape: {getattr(ref, 'shape', None)}")
-        print(f"[ReferenceMatcher] input embedding shape: {getattr(embedding, 'shape', None)}")
 
         if len(references) == 0:
             return False  # 기준 없음
@@ -43,7 +38,6 @@ class ReferenceMatcher:
                 / (np.linalg.norm(embedding) * np.linalg.norm(reference) + 1e-8)
             )
             distance = 1.0 - cosine_similarity
-            print(f"[ReferenceMatcher] cosine distance: {distance:.4f}")
             distances.append(distance)
 
         if len(distances) == 0:

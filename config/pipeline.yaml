@@ -2,8 +2,8 @@
 # 이 값만 바꾸면 전체 파이프라인이 새 설정을 따릅니다
 
 mosaic_threshold: 0.35  # cosine distance threshold
-reference_image: data/input/lfw_sample/Angelina_Jolie_0001.jpg
-test_image: data/input/lfw_sample/Angelina_Jolie_0001.jpg
+reference_image: data/input/target.jpg
+test_image: data/input/test_image.jpg
 input_dir: data/input
 output_dir: data/output
 webcam_id: 0
