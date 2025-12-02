@@ -1,0 +1,103 @@
+{
+  "timestamp": "2025-12-01 18:30:43",
+  "test_image": "data/input/단체사진.jpg",
+  "person_name": "영서",
+  "threshold": 0.47,
+  "reference_images": [
+    "data/input/영서/영서1.jpg",
+    "data/input/영서/영서2.jpg",
+    "data/input/영서/영서3.jpg"
+  ],
+  "faces": [
+    {
+      "face_index": 0,
+      "bbox": [
+        681,
+        308,
+        769,
+        418
+      ],
+      "min_distance": 0.7696409546522995,
+      "all_distances": [
+        0.7696409546522995,
+        1.0592659147117631,
+        0.8097989762848266
+      ],
+      "is_same_person": false,
+      "will_mosaic": true
+    },
+    {
+      "face_index": 1,
+      "bbox": [
+        942,
+        344,
+        1018,
+        446
+      ],
+      "min_distance": 0.5969209769097814,
+      "all_distances": [
+        0.8311805790366994,
+        0.5969209769097814,
+        0.7365070293677356
+      ],
+      "is_same_person": false,
+      "will_mosaic": true
+    },
+    {
+      "face_index": 2,
+      "bbox": [
+        329,
+        308,
+        405,
+        407
+      ],
+      "min_distance": 0.8547971114135386,
+      "all_distances": [
+        0.9710725809546241,
+        0.8547971114135386,
+        0.9076220049333847
+      ],
+      "is_same_person": false,
+      "will_mosaic": true
+    },
+    {
+      "face_index": 3,
+      "bbox": [
+        504,
+        361,
+        575,
+        448
+      ],
+      "min_distance": 0.38055309560770045,
+      "all_distances": [
+        0.5578834160670552,
+        0.5555308803659406,
+        0.38055309560770045
+      ],
+      "is_same_person": true,
+      "will_mosaic": false
+    },
+    {
+      "face_index": 4,
+      "bbox": [
+        99,
+        395,
+        168,
+        470
+      ],
+      "min_distance": 0.42586085332545154,
+      "all_distances": [
+        0.5119860817119568,
+        0.7075577109494016,
+        0.42586085332545154
+      ],
+      "is_same_person": true,
+      "will_mosaic": false
+    }
+  ],
+  "reference_embeddings_count": 3,
+  "total_faces_detected": 5,
+  "processing_time_seconds": 0.75022,
+  "same_person_count": 2,
+  "mosaicked_count": 3
+}

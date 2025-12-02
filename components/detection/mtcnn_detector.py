@@ -30,8 +30,8 @@ class FaceDetector:
     and conversion into bounding boxes + aligned face crops.
     """
 
-    def __init__(self, model_path: Path, min_size: int) -> None:
-        self.model_path = model_path
+    def __init__(self, model_path: Path = None, min_size: int = 40) -> None:
+        self.model_path = model_path  # MTCNN은 facenet_pytorch 라이브러리 사용, 실제 모델 파일 불필요
         self.min_size = min_size
         self.model = MTCNN(
             image_size=160,
