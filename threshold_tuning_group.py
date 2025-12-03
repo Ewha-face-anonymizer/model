@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import List, Dict
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 import cv2
 from datetime import datetime
 import argparse
@@ -35,6 +36,43 @@ class GroupPhotoThresholdTuner:
         # 결과 저장용
         self.results: List[Dict] = []
         
+    def analyze_with_comparison(
+        self,
+        group_photo_path: Path,
+        reference_photo_paths: List[Path],
+        threshold_range: np.ndarray,
+        person_name: str
+    ) -> Dict:
+        """기준인물 1장 vs 3장 비교 분석"""
+        results_1ref = []
+        results_3ref = []
+        
+        for threshold in threshold_range:
+            # 1장만 사용
+            result_1, _, _ = self.analyze_group_photo(
+                group_photo_path, [reference_photo_paths[0]], threshold
+            )
+            results_1ref.append({
+                'threshold': threshold,
+                'found_person': result_1['same_person_count'] > 0,
+                'same_count': result_1['same_person_count']
+            })
+            
+            # 3장 모두 사용
+            result_3, _, _ = self.analyze_group_photo(
+                group_photo_path, reference_photo_paths[:3], threshold
+            )
+            results_3ref.append({
+                'threshold': threshold,
+                'found_person': result_3['same_person_count'] > 0,
+                'same_count': result_3['same_person_count']
+            })
+        
+        return {
+            'one_ref': results_1ref,
+            'three_ref': results_3ref
+        }
+    
     def analyze_group_photo(
         self, 
         group_photo_path: Path, 
@@ -178,11 +216,10 @@ class GroupPhotoThresholdTuner:
             threshold_range = np.arange(0.2, 0.85, 0.05)
         
         if output_dir is None:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             if person_name:
-                output_dir = Path(f"data/output/threshold_tuning_group_{person_name}_{timestamp}")
+                output_dir = Path(f"data/output/threshold_tuning_group_{person_name}")
             else:
-                output_dir = Path(f"data/output/threshold_tuning_group_{timestamp}")
+                output_dir = Path(f"data/output/threshold_tuning_group")
         
         output_dir.mkdir(parents=True, exist_ok=True)
         
@@ -268,6 +305,47 @@ class GroupPhotoThresholdTuner:
         print(f"상세 결과 저장: {output_path}")
         return df
     
+    def plot_comparison(self, comparison_results: Dict, output_path: Path, person_name: str):
+        """기준인물 탐지 성공률 및 레퍼런스 장수 비교 그래프"""
+        one_ref = pd.DataFrame(comparison_results['one_ref'])
+        three_ref = pd.DataFrame(comparison_results['three_ref'])
+        
+        fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+        fig.suptitle(f'Reference Photo Comparison - {person_name}', fontsize=16, fontweight='bold')
+        
+        # 그래프 1: 기준인물 탐지 성공률
+        ax1 = axes[0]
+        detection_rate_1 = [1 if x else 0 for x in one_ref['found_person']]
+        detection_rate_3 = [1 if x else 0 for x in three_ref['found_person']]
+        
+        ax1.plot(one_ref['threshold'], detection_rate_1, 
+                marker='o', label='1 Reference Photo', linewidth=2, color='#E63946')
+        ax1.plot(three_ref['threshold'], detection_rate_3, 
+                marker='s', label='3 Reference Photos', linewidth=2, color='#06A77D')
+        ax1.set_xlabel('Threshold', fontsize=12)
+        ax1.set_ylabel('Person Detected (1=Yes, 0=No)', fontsize=12)
+        ax1.set_title('Target Person Detection Success', fontsize=14)
+        ax1.set_ylim([-0.1, 1.1])
+        ax1.grid(True, alpha=0.3)
+        ax1.legend(fontsize=10)
+        
+        # 그래프 2: 동일인물로 인식된 얼굴 수 비교
+        ax2 = axes[1]
+        ax2.plot(one_ref['threshold'], one_ref['same_count'], 
+                marker='o', label='1 Reference Photo', linewidth=2, color='#E63946')
+        ax2.plot(three_ref['threshold'], three_ref['same_count'], 
+                marker='s', label='3 Reference Photos', linewidth=2, color='#06A77D')
+        ax2.set_xlabel('Threshold', fontsize=12)
+        ax2.set_ylabel('Number of Matched Faces', fontsize=12)
+        ax2.set_title('Matched Face Count Comparison', fontsize=14)
+        ax2.grid(True, alpha=0.3)
+        ax2.legend(fontsize=10)
+        
+        plt.tight_layout()
+        plt.savefig(output_path, dpi=300, bbox_inches='tight')
+        print(f"비교 그래프 저장 완료: {output_path}")
+        plt.close()
+    
     def print_recommendation(self):
         """최적 threshold 추천"""
         print("\n" + "=" * 70)
@@ -293,9 +371,9 @@ def main():
     # 커맨드 라인 인자 파싱
     parser = argparse.ArgumentParser(description='단체사진 기반 Threshold 튜닝')
     parser.add_argument('--group', '-g', type=str, required=True,
-                       help='단체사진 경로 (예: data/input/단체사진.jpg)')
+                       help='단체사진 경로 (예: data/input/Dataset/person00/test_group.jpg)')
     parser.add_argument('--reference', '-r', type=str, required=True,
-                       help='기준인물 사진 폴더 또는 파일 (예: data/input/베일리 또는 data/input/베일리/베일리_1.jpg)')
+                       help='기준인물 사진 폴더 또는 파일 (예: data/input/Dataset/person00 또는 data/input/Dataset/person00/ref_01.jpg)')
     parser.add_argument('--min-threshold', type=float, default=0.2,
                        help='최소 threshold 값 (기본: 0.2)')
     parser.add_argument('--max-threshold', type=float, default=0.85,
@@ -322,12 +400,10 @@ def main():
     # 기준인물 사진 찾기 (폴더 또는 단일 파일)
     reference_photos = []
     if reference_path.is_dir():
-        # 폴더인 경우: 모든 이미지 파일 찾기
-        reference_photos = sorted(list(reference_path.glob("*.jpg")) + 
-                                 list(reference_path.glob("*.png")) +
-                                 list(reference_path.glob("*.jpeg")))
+        # 폴더인 경우: ref_XX.jpg 패턴의 파일만 찾기
+        reference_photos = sorted(list(reference_path.glob("ref_*.jpg")))
         if not reference_photos:
-            print(f"오류: 폴더에서 이미지를 찾을 수 없습니다: {reference_path}")
+            print(f"오류: 폴더에서 ref_XX.jpg 이미지를 찾을 수 없습니다: {reference_path}")
             return
     elif reference_path.exists():
         # 단일 파일인 경우
@@ -356,9 +432,44 @@ def main():
     results = tuner.tune(group_photo, reference_photos, threshold_range, output_dir, person_name)
     
     # 결과 저장
+    if output_dir is None:
+        if person_name:
+            output_dir = Path(f"data/output/threshold_tuning_group_{person_name}")
+        else:
+            output_dir = Path(f"data/output/threshold_tuning_group")
+        output_dir.mkdir(parents=True, exist_ok=True)
+    
     tuner.save_summary(output_dir / "summary.csv")
     tuner.save_detailed_results(output_dir / "details.csv")
     tuner.print_recommendation()
+    
+    # 레퍼런스 사진이 3장 이상인 경우 비교 분석 수행
+    if len(reference_photos) >= 3:
+        print("\n" + "=" * 70)
+        print("레퍼런스 사진 1장 vs 3장 비교 분석 시작")
+        print("=" * 70)
+        
+        comparison_results = tuner.analyze_with_comparison(
+            group_photo, reference_photos, threshold_range, person_name or "Unknown"
+        )
+        
+        tuner.plot_comparison(
+            comparison_results, 
+            output_dir / "comparison_plot.png",
+            person_name or "Unknown"
+        )
+        
+        # 비교 결과 요약 출력
+        print("\n[비교 분석 요약]")
+        one_ref_df = pd.DataFrame(comparison_results['one_ref'])
+        three_ref_df = pd.DataFrame(comparison_results['three_ref'])
+        
+        one_success_rate = one_ref_df['found_person'].sum() / len(one_ref_df)
+        three_success_rate = three_ref_df['found_person'].sum() / len(three_ref_df)
+        
+        print(f"1장 사용: 기준인물 탐지 성공률 {one_success_rate:.1%}")
+        print(f"3장 사용: 기준인물 탐지 성공률 {three_success_rate:.1%}")
+        print(f"개선율: {(three_success_rate - one_success_rate):.1%}p")
     
     print(f"\n모든 결과는 {output_dir}에 저장되었습니다.")
 
