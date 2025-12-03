@@ -1,0 +1,87 @@
+{
+  "threshold": 0.45,
+  "total_persons": 50,
+  "statistics": {
+    "same_person_distance": {
+      "mean": 0.5009597859578199,
+      "median": 0.45673821287153266,
+      "std": 0.1295450554052759,
+      "min": 0.2561756151897793,
+      "max": 0.8486865251273641
+    },
+    "group_min_distance": {
+      "mean": 0.4242549459187963,
+      "median": 0.40759038966776306,
+      "std": 0.0804982021638808,
+      "min": 0.2575826719139193,
+      "max": 0.5986400286756175
+    }
+  },
+  "performance": {
+    "detection_success": 30,
+    "detection_failure": 20,
+    "success_rate": 0.6
+  },
+  "precision_recall": {
+    "true_positive": 30,
+    "false_negative": 20,
+    "false_positive_estimate": 6,
+    "precision": 0.8333333333333334,
+    "recall": 0.6,
+    "f1_score": 0.6976744186046512
+  },
+  "detected_persons": [
+    "person01",
+    "person03",
+    "person04",
+    "person05",
+    "person06",
+    "person07",
+    "person09",
+    "person10",
+    "person11",
+    "person12",
+    "person13",
+    "person14",
+    "person19",
+    "person22",
+    "person23",
+    "person24",
+    "person25",
+    "person26",
+    "person29",
+    "person31",
+    "person32",
+    "person33",
+    "person35",
+    "person37",
+    "person39",
+    "person40",
+    "person41",
+    "person43",
+    "person44",
+    "person46"
+  ],
+  "failed_persons": [
+    "person02",
+    "person08",
+    "person15",
+    "person16",
+    "person17",
+    "person18",
+    "person20",
+    "person21",
+    "person27",
+    "person28",
+    "person30",
+    "person34",
+    "person36",
+    "person38",
+    "person42",
+    "person45",
+    "person47",
+    "person48",
+    "person49",
+    "person50"
+  ]
+}

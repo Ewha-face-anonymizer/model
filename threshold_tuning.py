@@ -154,53 +154,21 @@ class ThresholdTuner:
         """결과 시각화 및 저장"""
         df = pd.DataFrame(self.results)
         
-        fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+        # 1개의 그래프만 생성 (Overall Accuracy)
+        fig, ax = plt.subplots(1, 1, figsize=(10, 6))
         fig.suptitle('Threshold Tuning Results', fontsize=16, fontweight='bold')
         
-        # 1. 전체 정확도
-        axes[0, 0].plot(df['threshold'], df['accuracy'], marker='o', linewidth=2)
-        axes[0, 0].set_xlabel('Threshold')
-        axes[0, 0].set_ylabel('Accuracy')
-        axes[0, 0].set_title('Overall Accuracy vs Threshold')
-        axes[0, 0].grid(True, alpha=0.3)
+        # 전체 정확도
+        ax.plot(df['threshold'], df['accuracy'], marker='o', linewidth=2, color='#2E86AB')
+        ax.set_xlabel('Threshold', fontsize=12)
+        ax.set_ylabel('Accuracy', fontsize=12)
+        ax.set_title('Overall Accuracy vs Threshold', fontsize=14)
+        ax.grid(True, alpha=0.3)
         best_idx = df['accuracy'].idxmax()
-        axes[0, 0].axvline(df.loc[best_idx, 'threshold'], color='r', 
-                          linestyle='--', alpha=0.5, 
-                          label=f'Best: {df.loc[best_idx, "threshold"]:.2f}')
-        axes[0, 0].legend()
-        
-        # 2. 같은 사람 vs 다른 사람 정확도
-        axes[0, 1].plot(df['threshold'], df['same_person_accuracy'], 
-                       marker='o', label='Same Person', linewidth=2)
-        axes[0, 1].plot(df['threshold'], df['diff_person_accuracy'], 
-                       marker='s', label='Different Person', linewidth=2)
-        axes[0, 1].set_xlabel('Threshold')
-        axes[0, 1].set_ylabel('Accuracy')
-        axes[0, 1].set_title('Accuracy by Person Type')
-        axes[0, 1].legend()
-        axes[0, 1].grid(True, alpha=0.3)
-        
-        # 3. 평균 거리 비교
-        axes[1, 0].plot(df['threshold'], df['same_person_avg_dist'], 
-                       marker='o', label='Same Person Avg Distance', linewidth=2)
-        axes[1, 0].plot(df['threshold'], df['diff_person_avg_dist'], 
-                       marker='s', label='Different Person Avg Distance', linewidth=2)
-        axes[1, 0].axhline(df['threshold'].mean(), color='gray', 
-                          linestyle='--', alpha=0.5, label='Threshold Range')
-        axes[1, 0].set_xlabel('Threshold')
-        axes[1, 0].set_ylabel('Cosine Distance')
-        axes[1, 0].set_title('Average Distance Comparison')
-        axes[1, 0].legend()
-        axes[1, 0].grid(True, alpha=0.3)
-        
-        # 4. 정확도 히트맵
-        accuracy_data = df[['threshold', 'same_person_accuracy', 'diff_person_accuracy']].set_index('threshold')
-        im = axes[1, 1].imshow(accuracy_data.T, aspect='auto', cmap='RdYlGn', vmin=0, vmax=1)
-        axes[1, 1].set_yticks([0, 1])
-        axes[1, 1].set_yticklabels(['Same Person', 'Different Person'])
-        axes[1, 1].set_xlabel('Threshold Index')
-        axes[1, 1].set_title('Accuracy Heatmap')
-        plt.colorbar(im, ax=axes[1, 1])
+        ax.axvline(df.loc[best_idx, 'threshold'], color='r', 
+                  linestyle='--', alpha=0.5, 
+                  label=f'Best: {df.loc[best_idx, "threshold"]:.2f}')
+        ax.legend(fontsize=10)
         
         plt.tight_layout()
         plt.savefig(output_path, dpi=300, bbox_inches='tight')
@@ -232,7 +200,7 @@ def main():
     # 커맨드 라인 인자 파싱
     parser = argparse.ArgumentParser(description='이미지 쌍 기반 Threshold 튜닝')
     parser.add_argument('--person-dir', '-p', type=str, required=True,
-                       help='한 사람의 사진들이 있는 폴더 (예: data/input/베일리)')
+                       help='한 사람의 사진들이 있는 폴더 (예: data/input/Dataset/person00)')
     parser.add_argument('--min-threshold', type=float, default=0.2,
                        help='최소 threshold 값 (기본: 0.2)')
     parser.add_argument('--max-threshold', type=float, default=0.85,
@@ -246,15 +214,16 @@ def main():
     config_path = Path("config/pipeline.yaml")
     tuner = ThresholdTuner(config_path)
     
-    # 폴더에서 이미지 파일 찾기
+    # 폴더에서 이미지 파일 찾기 (ref_XX.jpg 패턴)
     person_dir = Path(args.person_dir)
     if not person_dir.exists():
         print(f"오류: 폴더를 찾을 수 없습니다: {person_dir}")
         return
     
-    image_files = sorted(list(person_dir.glob("*.jpg")) + list(person_dir.glob("*.png")))
+    # ref_XX.jpg 패턴의 파일만 선택
+    image_files = sorted(list(person_dir.glob("ref_*.jpg")))
     if len(image_files) < 2:
-        print(f"오류: 최소 2개 이상의 이미지가 필요합니다. 현재: {len(image_files)}개")
+        print(f"오류: 최소 2개 이상의 ref_XX.jpg 이미지가 필요합니다. 현재: {len(image_files)}개")
         return
     
     # 같은 사람 이미지 쌍 생성 (모든 조합)
