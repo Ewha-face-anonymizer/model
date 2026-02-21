@@ -4,7 +4,6 @@ MTCNN 모델을 감싸는 감지기 스텁입니다. 이미지 로딩/저장과 
 Face detection utilities built around MTCNN.
 """
 
-from pathlib import Path
 from typing import List, Tuple
 
 import cv2
@@ -30,8 +29,8 @@ class FaceDetector:
     and conversion into bounding boxes + aligned face crops.
     """
 
-    def __init__(self, model_path: Path, min_size: int) -> None:
-        self.model_path = model_path
+    def __init__(self, model_name: str, min_size: int) -> None:
+        self.model_name = model_name
         self.min_size = min_size
         self.model = MTCNN(
             image_size=160,

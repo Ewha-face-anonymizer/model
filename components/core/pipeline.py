@@ -24,7 +24,7 @@ class MosaicPipeline:
     def __init__(self, config: AppConfig) -> None:
         self.config = config
         self.detector = FaceDetector(
-            model_path=Path(config.models.detector),
+            model_name=config.models.detector,
             min_size=config.processing.detection_min_size,
         )
         self.embedder = FaceEmbedder(model_path=Path(config.models.embedder))
@@ -32,6 +32,7 @@ class MosaicPipeline:
         self.mosaicer = MosaicProcessor(kernel_size=config.processing.mosaic_kernel)
         self.reference_manager = ReferenceManager(
             embedder=self.embedder,
+            detector=self.detector,
         )
 
     def process_image(

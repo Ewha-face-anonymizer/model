@@ -1,2 +1,4 @@
 models/arcface.onnx
 models/mtcnn.onnx
+# local-only planning notes
+TEAM_SHARE_LOCAL.md

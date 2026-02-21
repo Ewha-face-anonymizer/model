@@ -1,5 +1,3 @@
-"""Detection modules (e.g., MTCNN wrappers)."""
+# components/detection/__init__.py
 
 from .mtcnn_detector import FaceDetector
-
-__all__ = ["FaceDetector"]
