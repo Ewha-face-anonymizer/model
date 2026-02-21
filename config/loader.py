@@ -11,7 +11,6 @@ import yaml
 
 @dataclass
 class ModelPaths:
-    detector: str
     embedder: str
 
 
